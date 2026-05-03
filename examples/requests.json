@@ -1,0 +1,120 @@
+{
+  "info": {
+    "name": "GPC Product Manager API",
+    "_postman_id": "gpc-api-collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Registro",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@ejemplo.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@ejemplo.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "GPC",
+      "item": [
+        {
+          "name": "GET /segments",
+          "request": { "method": "GET", "url": "{{base_url}}/segments" }
+        },
+        {
+          "name": "GET /families/:segmentId",
+          "request": { "method": "GET", "url": "{{base_url}}/families/1" }
+        },
+        {
+          "name": "GET /classes/:familyId",
+          "request": { "method": "GET", "url": "{{base_url}}/classes/1" }
+        },
+        {
+          "name": "GET /bricks/:classId",
+          "request": { "method": "GET", "url": "{{base_url}}/bricks/1" }
+        },
+        {
+          "name": "GET /attributes/:brickId",
+          "request": { "method": "GET", "url": "{{base_url}}/attributes/1" }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "GET /products",
+          "request": { "method": "GET", "url": "{{base_url}}/products" }
+        },
+        {
+          "name": "GET /products/:id",
+          "request": { "method": "GET", "url": "{{base_url}}/products/1" }
+        },
+        {
+          "name": "POST /products",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/products",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Leche Entera 1L\",\n  \"descripcion\": \"Leche entera pasteurizada\",\n  \"precio\": 2.50,\n  \"brickId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "PUT /products/:id",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/products/1",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precio\": 2.99,\n  \"descripcion\": \"Leche entera pasteurizada - precio actualizado\"\n}"
+            }
+          }
+        },
+        {
+          "name": "DELETE /products/:id",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/products/1",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

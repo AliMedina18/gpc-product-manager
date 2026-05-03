@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// ⚠️ TABLA FUNDAMENTAL - NO ELIMINAR
+/// Contiene la jerarquía de clasificación GPC (Global Product Classification)
+/// Nivel 1 de la estructura de 5 niveles (Segment > Family > Class > Brick > Attributes)
+model Segment {
+  id       Int      @id @default(autoincrement())
+  nombre   String   @unique
+  families Family[]
+
+  @@map("segments")
+}
+
+/// ⚠️ TABLA FUNDAMENTAL - NO ELIMINAR
+/// Nivel 2 de la jerarquía GPC (Family)
+/// Contiene las familias de productos clasificados
+model Family {
+  id        Int     @id @default(autoincrement())
+  nombre    String
+  segmentId Int
+  classes   Class[]
+  segment   Segment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+
+  @@unique([nombre, segmentId])
+  @@map("families")
+}
+
+/// ⚠️ TABLA FUNDAMENTAL - NO ELIMINAR
+/// Nivel 3 de la jerarquía GPC (Class)
+/// Contiene las clases de productos
+model Class {
+  id       Int     @id @default(autoincrement())
+  nombre   String
+  familyId Int
+  bricks   Brick[]
+  family   Family  @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@unique([nombre, familyId])
+  @@map("classes")
+}
+
+/// ⚠️ TABLA FUNDAMENTAL - NO ELIMINAR
+/// Nivel 4 de la jerarquía GPC (Brick)
+/// Contiene los tipos de productos (Bricks)
+model Brick {
+  id         Int         @id @default(autoincrement())
+  nombre     String
+  classId    Int
+  attributes Attribute[]
+  class      Class       @relation(fields: [classId], references: [id], onDelete: Cascade)
+  products   Product[]
+
+  @@unique([nombre, classId])
+  @@map("bricks")
+}
+
+/// ⚠️ TABLA FUNDAMENTAL - NO ELIMINAR
+/// Nivel 5 de la jerarquía GPC (Attributes)
+/// Contiene los atributos de cada producto (Brick)
+model Attribute {
+  id      Int    @id @default(autoincrement())
+  nombre  String
+  brickId Int
+  brick   Brick  @relation(fields: [brickId], references: [id], onDelete: Cascade)
+
+  @@unique([nombre, brickId])
+  @@map("attributes")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  precio      Decimal  @db.Decimal(10, 2)
+  brickId     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  brick       Brick    @relation(fields: [brickId], references: [id], onDelete: Cascade)
+
+  @@map("products")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  roleId    Int
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("users")
+}
+
+model Role {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  users     User[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("roles")
+}
