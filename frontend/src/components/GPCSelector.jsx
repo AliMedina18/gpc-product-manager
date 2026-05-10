@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Select } from './Select';
-import { Spinner } from './Spinner';
-import { gpcService } from '../services/gpcService';
+import { useState, useEffect } from "react";
+import { Select } from "./Select";
+import { Spinner } from "./Spinner";
+import { gpcService } from "../services/gpcService";
 
 export const GPCSelector = ({ onChange, selectedBrickId }) => {
   const [segments, setSegments] = useState([]);
@@ -10,12 +10,16 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
   const [bricks, setBricks] = useState([]);
   const [attributes, setAttributes] = useState([]);
 
-  const [segmentId, setSegmentId] = useState('');
-  const [familyId, setFamilyId] = useState('');
-  const [classId, setClassId] = useState('');
-  const [brickId, setBrickId] = useState(selectedBrickId || '');
+  const [segmentId, setSegmentId] = useState("");
+  const [familyId, setFamilyId] = useState("");
+  const [classId, setClassId] = useState("");
+  const [brickId, setBrickId] = useState(selectedBrickId || "");
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setBrickId(selectedBrickId || "");
+  }, [selectedBrickId]);
 
   // Cargar segments
   useEffect(() => {
@@ -25,7 +29,7 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
         const response = await gpcService.getSegments();
         setSegments(response.data);
       } catch (error) {
-        console.error('Error cargando segments:', error);
+        console.error("Error cargando segments:", error);
       } finally {
         setLoading(false);
       }
@@ -37,7 +41,7 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
   useEffect(() => {
     if (!segmentId) {
       setFamilies([]);
-      setFamilyId('');
+      setFamilyId("");
       return;
     }
 
@@ -47,7 +51,7 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
         const response = await gpcService.getFamilies(segmentId);
         setFamilies(response.data);
       } catch (error) {
-        console.error('Error cargando families:', error);
+        console.error("Error cargando families:", error);
       } finally {
         setLoading(false);
       }
@@ -59,7 +63,7 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
   useEffect(() => {
     if (!familyId) {
       setClasses([]);
-      setClassId('');
+      setClassId("");
       return;
     }
 
@@ -69,7 +73,7 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
         const response = await gpcService.getClasses(familyId);
         setClasses(response.data);
       } catch (error) {
-        console.error('Error cargando classes:', error);
+        console.error("Error cargando classes:", error);
       } finally {
         setLoading(false);
       }
@@ -81,7 +85,7 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
   useEffect(() => {
     if (!classId) {
       setBricks([]);
-      setBrickId('');
+      setBrickId("");
       return;
     }
 
@@ -91,7 +95,7 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
         const response = await gpcService.getBricks(classId);
         setBricks(response.data);
       } catch (error) {
-        console.error('Error cargando bricks:', error);
+        console.error("Error cargando bricks:", error);
       } finally {
         setLoading(false);
       }
@@ -114,7 +118,7 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
         setAttributes(response.data);
         onChange?.(brickId);
       } catch (error) {
-        console.error('Error cargando attributes:', error);
+        console.error("Error cargando attributes:", error);
       } finally {
         setLoading(false);
       }
@@ -157,10 +161,15 @@ export const GPCSelector = ({ onChange, selectedBrickId }) => {
 
       {brickId && attributes.length > 0 && (
         <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm font-medium text-blue-900 mb-2">Atributos disponibles:</p>
+          <p className="text-sm font-medium text-blue-900 mb-2">
+            Atributos disponibles:
+          </p>
           <div className="flex flex-wrap gap-2">
             {attributes.map((attr) => (
-              <span key={attr.id} className="px-3 py-1 bg-blue-200 text-blue-900 rounded-full text-sm">
+              <span
+                key={attr.id}
+                className="px-3 py-1 bg-blue-200 text-blue-900 rounded-full text-sm"
+              >
                 {attr.nombre}
               </span>
             ))}

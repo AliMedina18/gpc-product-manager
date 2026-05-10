@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Layout } from "../components/Layout";
 import { Card, CardHeader, CardBody, CardFooter } from "../components/Card";
@@ -43,6 +43,33 @@ export const CreateProductPage = () => {
     descripcion: "",
     precio: "",
   });
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!id) return;
+
+      try {
+        const response = await productService.getById(id);
+        const product = response.data;
+
+        if (!product) {
+          setErrorMessage("Producto no encontrado");
+          return;
+        }
+
+        form.setValues({
+          nombre: product.nombre || "",
+          descripcion: product.descripcion || "",
+          precio: product.precio?.toString() || "",
+        });
+        setSelectedBrickId(product.brickId || product.brick?.id || "");
+      } catch (error) {
+        setErrorMessage("Error al cargar el producto");
+      }
+    };
+
+    loadProduct();
+  }, [id]);
 
   const handleSubmit = form.handleSubmit(async (values) => {
     const result = productSchema.safeParse({
